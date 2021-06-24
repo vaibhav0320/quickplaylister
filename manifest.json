@@ -1,0 +1,14 @@
+{
+    "name": "Youtube Playlister",
+    "description": "Create playlist for your temperory youtube session.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+      },
+      "permissions": ["storage", "activeTab", "scripting"],
+      "action": {
+        "default_popup": "popup.html"
+      },
+      "options_page": "options.html"
+  }
