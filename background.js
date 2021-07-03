@@ -25,7 +25,7 @@ function some_fun(url) {
     tabid = tabs[0].id;
     console.log("tab id is == ", tabid);
     main_tab =  tabid;
-}   );
+});
 };
 
 chrome.runtime.onMessage.addListener(
