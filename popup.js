@@ -32,3 +32,7 @@ function click_handler() {
   add_to_queue(res);
  
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("submit").onclick = click_handler;
+});
