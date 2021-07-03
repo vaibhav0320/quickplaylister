@@ -1,31 +1,40 @@
 var queue = new Array();
 var main_tab;
-async function getCurrentTab(uurl) {
-  let queryOptions = {active: true, currentWindow: true, url: uurl};
+var current_id;
+
+//ytplayer = document.getElementById("movie_player");
+
+async function get_tab() {
+  let queryOptions = {active: true, currentWindow: true, url: queue[current_id]};
   let [tab] = await chrome.tabs.query(queryOptions);
   return tab;
 }
 
-function init(url){
+
+
+function add_to_queue(url){
+  if(queue.length == 0 ){
+    some_fun(url);
+    current_id = 0;
+  }
   queue.push(url);
-  main_tab = getCurrentTab(url);
-  console.log(main_tab);
 }
+
+function some_fun(url) {
+  chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+    tabid = tabs[0].id;
+    console.log("tab id is == ", tabid);
+    main_tab =  tabid;
+}   );
+};
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     //console.log("back : from the extension");
-    console.log(request);
-    if(queue.length == 0){
-      init(request.url);
-    }
-  
-  console.log(queue);
-  console.log(main_tab);
+    
+  add_to_queue(request.url);
   sendResponse({send: "ack"});
+  
 }
 );
 
-async function store_info() {
-  
-}

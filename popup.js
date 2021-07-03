@@ -18,6 +18,7 @@ function add_to_queue(url){
 
 }
 
+
 function click_handler() {
   var url = document.getElementById('url').value;
   var res = url;
@@ -31,6 +32,3 @@ function click_handler() {
   add_to_queue(res);
  
 }
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("submit").onclick = click_handler;
-});
