@@ -1,17 +1,28 @@
 var queue = new Array();
 var main_tab;
 
+function get_tabid(){
+chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+  tabid = tabs[0].id;
+  console.log("tab id is == ", tabid);
+  main_tab =  tabid;
+}); }
+
 function add_to_queue(url){
 
 
-  chrome.runtime.sendMessage({url: url}, function(response) {
+  /*chrome.runtime.sendMessage({url: url}, function(response) {
       if(response.send != "ack"){
         console.log('internal error !!');
         return -1;
       }
       console.log("ack");
-  });
+  });*/
 
+  if(queue.length == 0 ){
+    get_tabid(url);
+    current_id = 0;
+  }
   queue.push(url);
   //console.log(queue);
 
@@ -36,17 +47,13 @@ function click_handler_add() {
 }
 
 async function click_handle_list(e){
-  chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-    tabid = tabs[0].id;
-    console.log("tab id is == ", tabid);
-    main_tab =  tabid;
-});
+  
     chrome.tabs.update(main_tab,{url:e.target.href});
     console.log(e.target.href);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("submit").onclick = click_handler_add;
   document.getElementById("playlist").onclick = click_handle_list;
 
-});
+  });
