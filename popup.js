@@ -1,12 +1,16 @@
 var queue = new Array();
 var main_tab;
 
+// Function to get tabid based on current tab
+
 function get_tabid(){
 chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
   tabid = tabs[0].id;
   console.log("tab id is == ", tabid);
   main_tab =  tabid;
 }); }
+
+//Adds url to queue and get the tab id of current tab.
 
 function add_to_queue(url){
 
@@ -24,10 +28,27 @@ function add_to_queue(url){
     current_id = 0;
   }
   queue.push(url);
+  get_info_from_page();
   //console.log(queue);
 
 }
 
+function get_info_from_page(){
+  if(typeof main_tab !== "undefined"){
+    
+    chrome.scripting.executeScript({
+      target: { tabId: main_tab },
+      files: ['contentscript.js']
+    });
+    
+}
+else{
+    setTimeout(get_info_from_page, 250);
+}
+  
+}
+
+// Handler when link is clicked
 
 function click_handler_add() {
   var url = document.getElementById('url').value;
@@ -42,6 +63,8 @@ function click_handler_add() {
   add_to_queue(res);
  /* var temp = "\"click_handle_list('"+res+"');\"";
   console.log('<li> <a href=' + res + ' onClick='+ temp + '>'  + 'afda </a> </li>');*/
+
+  //need to fix xss
   document.getElementById('playlist').innerHTML += '<li> <a href=' + res + '>'  + res + ' </a> </li>';
  
 }
@@ -52,8 +75,39 @@ async function click_handle_list(e){
     console.log(e.target.href);
 }
 
-  document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("submit").onclick = click_handler_add;
-  document.getElementById("playlist").onclick = click_handle_list;
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    //console.log("back : from the extension");
+    if(request.msg == "title"){
+      console.log(request.title);
+      console.log(request.playback_time);
+    }
 
+  sendResponse({send: "ack"});
+  
+});
+
+//handlers
+
+document.addEventListener("DOMContentLoaded", function () {
+document.getElementById("submit").onclick = click_handler_add;
+document.getElementById("playlist").onclick = click_handle_list;
+
+});
+
+const CONTEXT_MENU_ID = "some_wird_stufffffffffffffffffxxx";
+function getword(info,tab) {
+  if (info.menuItemId !== CONTEXT_MENU_ID) {
+    return;
+  }
+  console.log("Word " + info.selectionText + " was clicked.");
+}
+
+chrome.contextMenus.onClicked.addListener(getword);
+
+
+  chrome.contextMenus.create({
+    title: "Search: %s", 
+    contexts:["selection"], 
+    id : CONTEXT_MENU_ID
   });
