@@ -31,6 +31,9 @@ function add_to_queue(url){
   get_info_from_page();
   //console.log(queue);
 
+   //need to fix xss
+   document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
+
 }
 
 function get_info_from_page(){
@@ -64,8 +67,7 @@ function click_handler_add() {
  /* var temp = "\"click_handle_list('"+res+"');\"";
   console.log('<li> <a href=' + res + ' onClick='+ temp + '>'  + 'afda </a> </li>');*/
 
-  //need to fix xss
-  document.getElementById('playlist').innerHTML += '<li> <a href=' + res + '>'  + res + ' </a> </li>';
+ 
  
 }
 
@@ -95,19 +97,22 @@ document.getElementById("playlist").onclick = click_handle_list;
 
 });
 
-const CONTEXT_MENU_ID = "some_wird_stufffffffffffffffffxxx";
+const CONTEXT_MENU_ID = "quickplay";
 function getword(info,tab) {
   if (info.menuItemId !== CONTEXT_MENU_ID) {
     return;
   }
-  console.log("Word " + info.selectionText + " was clicked.");
+  console.log(info);
+  console.log("Word " + info.linkUrl + " was clicked.");
+  add_to_queue(info.linkUrl);
 }
 
 chrome.contextMenus.onClicked.addListener(getword);
 
-
+chrome.contextMenus.removeAll(function() {
   chrome.contextMenus.create({
-    title: "Search: %s", 
-    contexts:["selection"], 
+    title: "Search abla ka dabla", 
+    contexts:["link"], 
     id : CONTEXT_MENU_ID
   });
+});
