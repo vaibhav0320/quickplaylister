@@ -1,6 +1,28 @@
 var queue = new Array();
 var main_tab;
 
+load_from_storage();
+
+function load_from_storage(){
+  /*chrome.storage.local.get("list", function(data) {
+    data.list.forEach(add_to_queue)
+  });*/
+  
+  chrome.runtime.sendMessage({cmd: 'get'}, function(response) {
+    var temp_queue = response.farewell;
+    console.log(temp_queue);
+    if(typeof temp_queue !== 'undefined' && typeof temp_queue !== null){
+      queue = temp_queue;
+      queue.forEach((url)=>{
+        document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
+      });
+    }
+    });
+    
+  
+}
+
+
 // Function to get tabid based on current tab
 
 function get_tabid(){
@@ -14,7 +36,7 @@ chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 
 function add_to_queue(url){
 
-
+  console.log("add to quue cla");
   /*chrome.runtime.sendMessage({url: url}, function(response) {
       if(response.send != "ack"){
         console.log('internal error !!');
@@ -30,6 +52,13 @@ function add_to_queue(url){
   queue.push(url);
   get_info_from_page();
   //console.log(queue);
+
+  /*chrome.storage.local.set({ "list" : queue }, function(){
+    console.log("Saved");
+  });*/
+  chrome.runtime.sendMessage({cmd: 'set', url : queue}, function(response) {
+    //console.log(response.farewell);
+  });
 
    //need to fix xss
    document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
@@ -89,30 +118,25 @@ chrome.runtime.onMessage.addListener(
   
 });
 
+function click_handle_delete_all(){
+    chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {
+    
+  });
+}
+
 //handlers
 
 document.addEventListener("DOMContentLoaded", function () {
 document.getElementById("submit").onclick = click_handler_add;
 document.getElementById("playlist").onclick = click_handle_list;
+document.getElementById("clearall").onclick = click_handle_delete_all;
 
 });
 
-const CONTEXT_MENU_ID = "quickplay";
-function getword(info,tab) {
-  if (info.menuItemId !== CONTEXT_MENU_ID) {
-    return;
-  }
-  console.log(info);
-  console.log("Word " + info.linkUrl + " was clicked.");
-  add_to_queue(info.linkUrl);
-}
 
-chrome.contextMenus.onClicked.addListener(getword);
 
-chrome.contextMenus.removeAll(function() {
-  chrome.contextMenus.create({
-    title: "Search abla ka dabla", 
-    contexts:["link"], 
-    id : CONTEXT_MENU_ID
-  });
-});
+//#################################################
+//#       local storage                           #
+//#################################################
+
+
