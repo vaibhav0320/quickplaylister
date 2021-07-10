@@ -1,8 +1,4 @@
 
-
-//ytplayer = document.getElementById("movie_player");
-
-
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if(request.cmd == 'set'){;
@@ -33,11 +29,8 @@ chrome.runtime.onMessage.addListener(
   );
 
   function clear_local_storage(){
-    chrome.storage.local.clear(function() {
-      var error = chrome.runtime.lastError;
-        if (error) {
-          console.error(error);
-        }
+    chrome.storage.local.set({"list": []},function() {
+
      })
    }
 
@@ -55,15 +48,8 @@ function getword(info,tab) {
   if(typeof info.linkUrl !== "undefined"){
       chrome.storage.local.get("list", function(data) {
 
-      if(typeof data.list !== 'undefined'){
         data.list.push(info.linkUrl);
-      }
-      else{
-        var tlist = [];
-        tlist[0]= info.linkUrl;
-        data.list = tlist; 
-        console.log("done");
-      }
+      
 
       chrome.storage.local.set({ "list" : data.list}, function(){
         console.log("setting",data.list);
@@ -77,7 +63,7 @@ chrome.contextMenus.onClicked.addListener(getword);
 
 chrome.contextMenus.removeAll(function() {
   chrome.contextMenus.create({
-    title: "Search abla ka dabla", 
+    title: "Add video to Quick list", 
     contexts:["link"], 
     id : CONTEXT_MENU_ID
   });

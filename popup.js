@@ -4,22 +4,28 @@ var main_tab;
 load_from_storage();
 
 function load_from_storage(){
-  /*chrome.storage.local.get("list", function(data) {
-    data.list.forEach(add_to_queue)
-  });*/
-  
+   
   chrome.runtime.sendMessage({cmd: 'get'}, function(response) {
     var temp_queue = response.farewell;
     console.log(temp_queue);
     if(typeof temp_queue !== 'undefined' && typeof temp_queue !== null){
       queue = temp_queue;
       queue.forEach((url)=>{
-        document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
+       get_title(url);
+        
       });
     }
     });
     
   
+}
+
+function get_title(url){
+  fetch("https://www.youtube.com/oembed?url="+url+"&format=json").then(r => r.text()).then(result => {
+    var resp = JSON.parse(result);
+    console.log(resp.title);
+    document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  resp.title + ' </a> </li>';
+})
 }
 
 
@@ -36,7 +42,6 @@ chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 
 function add_to_queue(url){
 
-  console.log("add to quue cla");
   /*chrome.runtime.sendMessage({url: url}, function(response) {
       if(response.send != "ack"){
         console.log('internal error !!');
@@ -50,7 +55,7 @@ function add_to_queue(url){
     current_id = 0;
   }
   queue.push(url);
-  get_info_from_page();
+  //get_info_from_page();
   //console.log(queue);
 
   /*chrome.storage.local.set({ "list" : queue }, function(){
@@ -61,7 +66,7 @@ function add_to_queue(url){
   });
 
    //need to fix xss
-   document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
+  // document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
 
 }
 
@@ -78,26 +83,6 @@ else{
     setTimeout(get_info_from_page, 250);
 }
   
-}
-
-// Handler when link is clicked
-
-function click_handler_add() {
-  var url = document.getElementById('url').value;
-  var res = url;
-
-/* String matching function needs to be added */
- // var res = url.match(/aa/i);  
-  if(res == null){
-    return;
-  }
-  console.log(res);
-  add_to_queue(res);
- /* var temp = "\"click_handle_list('"+res+"');\"";
-  console.log('<li> <a href=' + res + ' onClick='+ temp + '>'  + 'afda </a> </li>');*/
-
- 
- 
 }
 
 async function click_handle_list(e){
@@ -127,16 +112,9 @@ function click_handle_delete_all(){
 //handlers
 
 document.addEventListener("DOMContentLoaded", function () {
-document.getElementById("submit").onclick = click_handler_add;
 document.getElementById("playlist").onclick = click_handle_list;
 document.getElementById("clearall").onclick = click_handle_delete_all;
 
 });
-
-
-
-//#################################################
-//#       local storage                           #
-//#################################################
 
 
