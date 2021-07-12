@@ -38,52 +38,6 @@ chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
   main_tab =  tabid;
 }); }
 
-//Adds url to queue and get the tab id of current tab.
-
-function add_to_queue(url){
-
-  /*chrome.runtime.sendMessage({url: url}, function(response) {
-      if(response.send != "ack"){
-        console.log('internal error !!');
-        return -1;
-      }
-      console.log("ack");
-  });*/
-
-  if(queue.length == 0 ){
-    get_tabid(url);
-    current_id = 0;
-  }
-  queue.push(url);
-  //get_info_from_page();
-  //console.log(queue);
-
-  /*chrome.storage.local.set({ "list" : queue }, function(){
-    console.log("Saved");
-  });*/
-  chrome.runtime.sendMessage({cmd: 'set', url : queue}, function(response) {
-    //console.log(response.farewell);
-  });
-
-   //need to fix xss
-  // document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
-
-}
-
-function get_info_from_page(){
-  if(typeof main_tab !== "undefined"){
-    
-    chrome.scripting.executeScript({
-      target: { tabId: main_tab },
-      files: ['contentscript.js']
-    });
-    
-}
-else{
-    setTimeout(get_info_from_page, 250);
-}
-  
-}
 
 async function click_handle_list(e){
   
@@ -91,17 +45,6 @@ async function click_handle_list(e){
     console.log(e.target.href);
 }
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    //console.log("back : from the extension");
-    if(request.msg == "title"){
-      console.log(request.title);
-      console.log(request.playback_time);
-    }
-
-  sendResponse({send: "ack"});
-  
-});
 
 function click_handle_delete_all(){
     chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {
@@ -118,3 +61,58 @@ document.getElementById("clearall").onclick = click_handle_delete_all;
 });
 
 
+//Adds url to queue and get the tab id of current tab.
+
+/*function add_to_queue(url){
+
+  chrome.runtime.sendMessage({url: url}, function(response) {
+      if(response.send != "ack"){
+        console.log('internal error !!');
+        return -1;
+      }
+      console.log("ack");
+  });
+
+  queue.push(url);
+  //get_info_from_page();
+  //console.log(queue);
+
+  chrome.storage.local.set({ "list" : queue }, function(){
+    console.log("Saved");
+  });
+  chrome.runtime.sendMessage({cmd: 'set', url : queue}, function(response) {
+    //console.log(response.farewell);
+  });
+
+   //need to fix xss
+  // document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
+
+} */
+
+/*function get_info_from_page(){
+  if(typeof main_tab !== "undefined"){
+    
+    chrome.scripting.executeScript({
+      target: { tabId: main_tab },
+      files: ['contentscript.js']
+    });
+    
+}
+else{
+    setTimeout(get_info_from_page, 250);
+}  
+}
+
+*/
+
+/*chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    //console.log("back : from the extension");
+    if(request.msg == "title"){
+      console.log(request.title);
+      console.log(request.playback_time);
+    }
+
+  sendResponse({send: "ack"});
+  
+});*/

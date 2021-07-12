@@ -48,12 +48,9 @@ function getword(info,tab) {
   if(typeof info.linkUrl !== "undefined"){
       chrome.storage.local.get("list", function(data) {
 
-        data.list.push(info.linkUrl);
-      
-
+      data.list.push(info.linkUrl);
       chrome.storage.local.set({ "list" : data.list}, function(){
-        console.log("setting",data.list);
-        chrome.storage.local.get("list", function(data) { console.log(data.list)});
+       
       });
   });
   }
