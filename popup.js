@@ -1,5 +1,5 @@
 var queue = new Array();
-var main_tab;
+
 
 load_from_storage();
 
@@ -22,9 +22,16 @@ function load_from_storage(){
 
 function get_title(url){
   fetch("https://www.youtube.com/oembed?url="+url+"&format=json").then(r => r.text()).then(result => {
-    var resp = JSON.parse(result);
-    console.log(resp.title);
-    document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  resp.title + ' </a> </li>';
+    var vidtitle;
+    try{
+      var resp = JSON.parse(result);
+      vidtitle = resp.title;
+      console.log(resp.title);
+    }
+    catch{
+      vidtitle = url;
+    }
+    document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  + vidtitle + ' </a> </li>';
 })
 }
 
@@ -39,20 +46,58 @@ chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 }); }
 
 
+function send_tabinfo(tab){
+  chrome.runtime.sendMessage({cmd: 'tab_info', tab:tab},function(response){});
+}
+
 async function click_handle_list(e){
-  
-    chrome.tabs.update(main_tab,{url:e.target.href});
-    console.log(e.target.href);
+
+ /* chrome.runtime.getBackgroundPage(function (bg) {
+    var main_tab = bg.main_tab;
+    console.log(main_tab);
+    if(main_tab === 'undefined'){
+      chrome.tabs.create({url:e.target.href});
+    }
+    else{
+    chrome.tabs.update(main_tab,{url:e.target.href});}
+  });*/
+  chrome.runtime.sendMessage({cmd: 'get_tabid'}, function(response) {
+     main_tab = response.tabid;
+     console.log("maintab= "+main_tab);
+     console.log(main_tab == undefined);
+     if(main_tab == undefined){
+      newtab=chrome.tabs.create({url:e.target.href},send_tabinfo);
+    }
+    else{
+
+      function maintab_check(){
+
+        if (chrome.runtime.lastError) {
+          newtab = chrome.tabs.create({url:e.target.href},send_tabinfo);
+          console.log(newtab);
+        } 
+        else{
+        chrome.tabs.update(main_tab,{url:e.target.href});
+        }
+      }
+
+      chrome.tabs.get(main_tab,maintab_check);
+    }
+
+  });
+    
+    //console.log(e.target.href);
 }
 
 
-function click_handle_delete_all(){
+
+function click_handle_delete_all(){ // Add something to remove links from html 
     chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {
     
   });
 }
 
-//handlers
+//Defining handlers
 
 document.addEventListener("DOMContentLoaded", function () {
 document.getElementById("playlist").onclick = click_handle_list;

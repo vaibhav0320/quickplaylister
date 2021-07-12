@@ -1,3 +1,4 @@
+var main_tab;
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -24,6 +25,14 @@ chrome.runtime.onMessage.addListener(
         if(request.cmd == 'clear_storage'){
             clear_local_storage()
         }
+
+        if(request.cmd == 'get_tabid'){
+          sendResponse({tabid: main_tab})
+        }
+        if(request.cmd == 'tab_info'){
+          console.log(request.tab.id);
+          main_tab = request.tab.id;
+        }
         return true;
     }
   );
@@ -33,6 +42,7 @@ chrome.runtime.onMessage.addListener(
 
      })
    }
+
 
 //#################################################
 //#       context menu                            #
@@ -47,6 +57,14 @@ function getword(info,tab) {
   //console.log("Word " + info.linkUrl + " was clicked.");
   if(typeof info.linkUrl !== "undefined"){
       chrome.storage.local.get("list", function(data) {
+      
+        if(data.list.length == 0){
+            chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+            tabid = tabs[0].id;
+            console.log("tab id is = ", tabid);
+            main_tab =  tabid;
+          });
+        }
 
       data.list.push(info.linkUrl);
       chrome.storage.local.set({ "list" : data.list}, function(){
