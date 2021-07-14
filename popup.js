@@ -1,5 +1,5 @@
 var queue = new Array();
-
+var lastid = 0;
 
 load_from_storage();
 
@@ -31,7 +31,23 @@ function get_title(url){
     catch{
       vidtitle = url;
     }
-    document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  + vidtitle + ' </a> </li>';
+   
+    //document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  + vidtitle + ' </a> </li>';
+    var list = document.getElementById('playlist');
+    
+    var entry = document.createElement('li');
+    var hreftag = document.createElement('a');
+    hreftag.appendChild(document.createTextNode(vidtitle));
+    hreftag.title= vidtitle;
+    hreftag.href = url;
+    entry.appendChild(hreftag);
+    entry.setAttribute('id','item'+lastid);
+    var removeButton = document.createElement('button');
+    removeButton.appendChild(document.createTextNode("remove"));
+    removeButton.setAttribute('id','button'+lastid);  
+    entry.appendChild(removeButton);
+    lastid+=1;
+    list.appendChild(entry);
 })
 }
 
@@ -74,7 +90,7 @@ async function click_handle_list(e){
 
         if (chrome.runtime.lastError) {
           newtab = chrome.tabs.create({url:e.target.href},send_tabinfo);
-          console.log(newtab);
+          //console.log(newtab);
         } 
         else{
         chrome.tabs.update(main_tab,{url:e.target.href});
@@ -97,12 +113,24 @@ function click_handle_delete_all(){ // Add something to remove links from html
   });
 }
 
+function removelink(buttonid){
+  console.log(buttonid);
+  document.getElementById(buttonid).parentElement.remove();
+}
 //Defining handlers
 
 document.addEventListener("DOMContentLoaded", function () {
-document.getElementById("playlist").onclick = click_handle_list;
+//document.getElementById("playlist").onclick = click_handle_list;
 document.getElementById("clearall").onclick = click_handle_delete_all;
-
+document.getElementById("playlist").addEventListener("click",function(e) {
+  console.log(e.target.nodeName);
+  if(e.target && e.target.nodeName === 'BUTTON') {
+      removelink(e.target.id);
+  }
+  if(e.target && e.target.nodeName === 'A'){
+    click_handle_list(e);
+  }
+});
 });
 
 

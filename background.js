@@ -1,5 +1,5 @@
 var main_tab;
-
+var listid = 0;
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if(request.cmd == 'set'){;
@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener(
 //#################################################
 
 const CONTEXT_MENU_ID = "quickplay";
-function getword(info,tab) {
+function geturl(info,tab) {
   if (info.menuItemId !== CONTEXT_MENU_ID) {
     return;
   }
@@ -66,15 +66,29 @@ function getword(info,tab) {
           });
         }
 
-      data.list.push(info.linkUrl);
-      chrome.storage.local.set({ "list" : data.list}, function(){
+        fetch("https://www.youtube.com/oembed?url="+info.linkUrl+"&format=json").then(r => r.text()).then(result => {
+          var vidtitle;
+          try{
+          var resp = JSON.parse(result);
+          vidtitle = resp.title;
+          console.log(resp.title);
+           }
+    
+          catch{
+          vidtitle = url;
+          }
+          data.list.push(info.linkUrl);
+          chrome.storage.local.set({ "list" : data.list}, function(){});
        
-      });
+            
+          });
+
+      
   });
   }
 }
 
-chrome.contextMenus.onClicked.addListener(getword);
+chrome.contextMenus.onClicked.addListener(geturl);
 
 chrome.contextMenus.removeAll(function() {
   chrome.contextMenus.create({
