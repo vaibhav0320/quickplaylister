@@ -3,6 +3,9 @@ var lastid = 0;
 
 load_from_storage();
 
+
+//## Initial function to fetch the data from storage if exist.
+
 function load_from_storage(){
    
   chrome.runtime.sendMessage({cmd: 'get'}, function(response) {
@@ -18,6 +21,8 @@ function load_from_storage(){
     
   
 }
+
+//## Generate html page 
 
 function generate_html(url,vidtitle){
   
@@ -43,6 +48,12 @@ function send_tabinfo(tab){
   chrome.runtime.sendMessage({cmd: 'tab_info', tab:tab},function(response){});
 }
 
+//#################################################
+//#       Handlers Part                           #
+//#################################################
+
+//## Handler for link when clicked
+
 async function click_handle_list(e){
 
   chrome.runtime.sendMessage({cmd: 'get_tabid'}, function(response) {
@@ -58,7 +69,6 @@ async function click_handle_list(e){
 
         if (chrome.runtime.lastError) {
           newtab = chrome.tabs.create({url:e.target.href},send_tabinfo);
-          //console.log(newtab);
         } 
         else{
         chrome.tabs.update(main_tab,{url:e.target.href});
@@ -70,29 +80,28 @@ async function click_handle_list(e){
 
   });
     
-    //console.log(e.target.href);
+   
 }
 
-
-
-function click_handle_delete_all(){ // Add something to remove links from html 
-   playlist = document.getElementById("playlist").innerHTML="";
-  
-    chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {
-    
-  });
-}
-
+//Handler for delete button
 function removelink(buttonid){
   console.log(buttonid);
   
   chrome.runtime.sendMessage({cmd: 'remove_key', key:buttonid}, function(response) {});
   document.getElementById(buttonid).remove();
 }
-//Defining handlers
+
+//##handler for deleteAll button
+
+function click_handle_delete_all(){ 
+   playlist = document.getElementById("playlist").innerHTML="";
+  chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {});
+}
+
+
+//registering handlers 
 
 document.addEventListener("DOMContentLoaded", function () {
-//document.getElementById("playlist").onclick = click_handle_list;
 document.getElementById("clearall").onclick = click_handle_delete_all;
 document.getElementById("playlist").addEventListener("click",function(e) {
   console.log(e.target.nodeName);
@@ -104,60 +113,3 @@ document.getElementById("playlist").addEventListener("click",function(e) {
   }
 });
 });
-
-
-//Adds url to queue and get the tab id of current tab.
-
-/*function add_to_queue(url){
-
-  chrome.runtime.sendMessage({url: url}, function(response) {
-      if(response.send != "ack"){
-        console.log('internal error !!');
-        return -1;
-      }
-      console.log("ack");
-  });
-
-  queue.push(url);
-  //get_info_from_page();
-  //console.log(queue);
-
-  chrome.storage.local.set({ "list" : queue }, function(){
-    console.log("Saved");
-  });
-  chrome.runtime.sendMessage({cmd: 'set', url : queue}, function(response) {
-    //console.log(response.farewell);
-  });
-
-   //need to fix xss
-  // document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  +  url + ' </a> </li>';
-
-} */
-
-/*function get_info_from_page(){
-  if(typeof main_tab !== "undefined"){
-    
-    chrome.scripting.executeScript({
-      target: { tabId: main_tab },
-      files: ['contentscript.js']
-    });
-    
-}
-else{
-    setTimeout(get_info_from_page, 250);
-}  
-}
-
-*/
-
-/*chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    //console.log("back : from the extension");
-    if(request.msg == "title"){
-      console.log(request.title);
-      console.log(request.playback_time);
-    }
-
-  sendResponse({send: "ack"});
-  
-});*/
