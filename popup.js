@@ -10,18 +10,21 @@ function load_from_storage(){
     console.log(temp_queue);
     if(typeof temp_queue !== 'undefined' && typeof temp_queue !== null){
       queue = temp_queue;
-      queue.forEach((url)=>{
+      /*queue.forEach((url)=>{
        get_title(url);
         
-      });
+      });*/
+      for(var key in queue){
+        get_title(key,queue[key]);
+      }
     }
     });
     
   
 }
 
-function get_title(url){
-  fetch("https://www.youtube.com/oembed?url="+url+"&format=json").then(r => r.text()).then(result => {
+function get_title(url,vidtitle){
+  /*fetch("https://www.youtube.com/oembed?url="+url+"&format=json").then(r => r.text()).then(result => {
     var vidtitle;
     try{
       var resp = JSON.parse(result);
@@ -30,7 +33,7 @@ function get_title(url){
     }
     catch{
       vidtitle = url;
-    }
+    }*/
    
     //document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  + vidtitle + ' </a> </li>';
     var list = document.getElementById('playlist');
@@ -48,7 +51,7 @@ function get_title(url){
     entry.appendChild(removeButton);
     lastid+=1;
     list.appendChild(entry);
-})
+
 }
 
 

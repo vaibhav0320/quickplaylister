@@ -2,7 +2,7 @@ var main_tab;
 var listid = 0;
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if(request.cmd == 'set'){;
+        if(request.cmd == 'set'){
         //console.log(queue);
         chrome.storage.local.set({ "list" : request.url }, function(){
             sendResponse({farewell: "saved"});
@@ -57,27 +57,27 @@ function geturl(info,tab) {
   //console.log("Word " + info.linkUrl + " was clicked.");
   if(typeof info.linkUrl !== "undefined"){
       chrome.storage.local.get("list", function(data) {
-      
         if(data.list.length == 0){
             chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
             tabid = tabs[0].id;
             console.log("tab id is = ", tabid);
             main_tab =  tabid;
           });
+          data.list = {};
         }
-
+        
         fetch("https://www.youtube.com/oembed?url="+info.linkUrl+"&format=json").then(r => r.text()).then(result => {
           var vidtitle;
           try{
           var resp = JSON.parse(result);
           vidtitle = resp.title;
-          console.log(resp.title);
-           }
+          }
     
           catch{
           vidtitle = url;
           }
-          data.list.push(info.linkUrl);
+          console.log(vidtitle);
+          data.list[info.linkUrl] = vidtitle;
           chrome.storage.local.set({ "list" : data.list}, function(){});
        
             
