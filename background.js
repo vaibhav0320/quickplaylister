@@ -1,15 +1,13 @@
 var main_tab;
 var listid = 0;
+
+//#################################################
+//#       On message listners                     #
+//#################################################
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if(request.cmd == 'set'){
-        //console.log(queue);
-        chrome.storage.local.set({ "list" : request.url }, function(){
-            sendResponse({farewell: "saved"});
-        });
-        
-        }
-
+       
         if(request.cmd == 'get'){
           var list;
             console.log("get called");
@@ -33,12 +31,20 @@ chrome.runtime.onMessage.addListener(
           console.log(request.tab.id);
           main_tab = request.tab.id;
         }
+        if(request.cmd == 'remove_key'){
+
+          chrome.storage.local.get("list", function(data) {
+            list = data.list;
+            delete list[request.key];
+            chrome.storage.local.set({"list":list},function(){});
+          });
+        }
         return true;
     }
   );
 
   function clear_local_storage(){
-    chrome.storage.local.set({"list": []},function() {
+    chrome.storage.local.set({"list": {}},function() {
 
      })
    }
@@ -79,8 +85,6 @@ function geturl(info,tab) {
           console.log(vidtitle);
           data.list[info.linkUrl] = vidtitle;
           chrome.storage.local.set({ "list" : data.list}, function(){});
-       
-            
           });
 
       

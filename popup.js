@@ -10,12 +10,8 @@ function load_from_storage(){
     console.log(temp_queue);
     if(typeof temp_queue !== 'undefined' && typeof temp_queue !== null){
       queue = temp_queue;
-      /*queue.forEach((url)=>{
-       get_title(url);
-        
-      });*/
       for(var key in queue){
-        get_title(key,queue[key]);
+        generate_html(key,queue[key]);
       }
     }
     });
@@ -23,19 +19,8 @@ function load_from_storage(){
   
 }
 
-function get_title(url,vidtitle){
-  /*fetch("https://www.youtube.com/oembed?url="+url+"&format=json").then(r => r.text()).then(result => {
-    var vidtitle;
-    try{
-      var resp = JSON.parse(result);
-      vidtitle = resp.title;
-      console.log(resp.title);
-    }
-    catch{
-      vidtitle = url;
-    }*/
-   
-    //document.getElementById('playlist').innerHTML += '<li> <a href=' + url + '>'  + vidtitle + ' </a> </li>';
+function generate_html(url,vidtitle){
+  
     var list = document.getElementById('playlist');
     
     var entry = document.createElement('li');
@@ -44,26 +29,15 @@ function get_title(url,vidtitle){
     hreftag.title= vidtitle;
     hreftag.href = url;
     entry.appendChild(hreftag);
-    entry.setAttribute('id','item'+lastid);
+    entry.setAttribute('id',url);
     var removeButton = document.createElement('button');
     removeButton.appendChild(document.createTextNode("remove"));
-    removeButton.setAttribute('id','button'+lastid);  
+    removeButton.setAttribute('id',url);  
     entry.appendChild(removeButton);
     lastid+=1;
     list.appendChild(entry);
 
 }
-
-
-// Function to get tabid based on current tab
-
-function get_tabid(){
-chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-  tabid = tabs[0].id;
-  console.log("tab id is == ", tabid);
-  main_tab =  tabid;
-}); }
-
 
 function send_tabinfo(tab){
   chrome.runtime.sendMessage({cmd: 'tab_info', tab:tab},function(response){});
@@ -71,15 +45,6 @@ function send_tabinfo(tab){
 
 async function click_handle_list(e){
 
- /* chrome.runtime.getBackgroundPage(function (bg) {
-    var main_tab = bg.main_tab;
-    console.log(main_tab);
-    if(main_tab === 'undefined'){
-      chrome.tabs.create({url:e.target.href});
-    }
-    else{
-    chrome.tabs.update(main_tab,{url:e.target.href});}
-  });*/
   chrome.runtime.sendMessage({cmd: 'get_tabid'}, function(response) {
      main_tab = response.tabid;
      console.log("maintab= "+main_tab);
@@ -111,6 +76,8 @@ async function click_handle_list(e){
 
 
 function click_handle_delete_all(){ // Add something to remove links from html 
+   playlist = document.getElementById("playlist").innerHTML="";
+  
     chrome.runtime.sendMessage({cmd: 'clear_storage'}, function(response) {
     
   });
@@ -118,7 +85,9 @@ function click_handle_delete_all(){ // Add something to remove links from html
 
 function removelink(buttonid){
   console.log(buttonid);
-  document.getElementById(buttonid).parentElement.remove();
+  
+  chrome.runtime.sendMessage({cmd: 'remove_key', key:buttonid}, function(response) {});
+  document.getElementById(buttonid).remove();
 }
 //Defining handlers
 
