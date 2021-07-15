@@ -1,12 +1,12 @@
 {
-    "name": "Quick Playlister",
-    "description": "Create playlist for your temperory youtube session.",
+    "name": "Quick Floating Playlist",
+    "description": "Create and Play playlist quickly from anywhere in browser and never forgot to watch watch later videos.",
     "version": "1.0",
     "manifest_version": 3,
     "background": {
         "service_worker": "background.js"
       },
-      "permissions": ["tabs","scripting", "activeTab", "contextMenus", "storage"],
+      "permissions": ["tabs", "contextMenus", "storage"],
       "icons": {
         "16": "16-icon.png",
         "48": "48-icon.png"
