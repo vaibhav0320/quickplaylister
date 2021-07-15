@@ -103,7 +103,7 @@ chrome.contextMenus.removeAll(function() {
     title: "Add video to Quick list", 
     contexts:["link","page"], 
     id : CONTEXT_MENU_ID,
-    targetUrlPatterns: ["https://www.youtube.com/*"],
-    documentUrlPatterns: ["https://www.youtube.com/*"]
+    targetUrlPatterns: ["https://www.youtube.com/watch?v=*"],
+    documentUrlPatterns: ["https://www.youtube.com/watch?v=*"]
   });
 });
