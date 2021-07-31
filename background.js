@@ -50,6 +50,11 @@ chrome.runtime.onMessage.addListener(
    }
 
 
+
+chrome.tabs.onUpdated.addListener(function(main_tab,changeInfo,tab){
+    console.log(tab,changeInfo);
+});
+
 //#################################################
 //#       context menu                            #
 //#################################################
