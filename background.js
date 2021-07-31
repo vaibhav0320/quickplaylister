@@ -109,6 +109,6 @@ chrome.contextMenus.removeAll(function() {
     contexts:["link","page"], 
     id : CONTEXT_MENU_ID,
     targetUrlPatterns: ["https://www.youtube.com/watch?v=*"],
-    documentUrlPatterns: ["https://www.youtube.com/watch?v=*"]
+    documentUrlPatterns: [ "https://www.youtube.com/*"]
   });
 });

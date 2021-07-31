@@ -44,6 +44,7 @@ function generate_html(url,vidtitle){
     removeButton.appendChild(document.createTextNode("remove"));
     removeButton.setAttribute('id',url);
     removeButton.setAttribute('class',"removebtn"); 
+    removeButton.innerHTML = '<i class="gg-trash"></i>';
     //removeButton.innerHTML = svg_icon;
     entry.appendChild(removeButton);
     lastid+=1;
