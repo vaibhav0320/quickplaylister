@@ -105,7 +105,7 @@ chrome.contextMenus.onClicked.addListener(geturl);
 
 chrome.contextMenus.removeAll(function() {
   chrome.contextMenus.create({
-    title: "Add video to Quick list", 
+    title: "Add to QuickList", 
     contexts:["link","page"], 
     id : CONTEXT_MENU_ID,
     targetUrlPatterns: ["https://www.youtube.com/watch?v=*"],

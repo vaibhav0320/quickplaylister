@@ -1,6 +1,6 @@
 {
     "name": "Quick Floating Playlist",
-    "description": "Create and Play playlist quickly from anywhere in browser and never forgot to watch watch later videos.",
+    "description": "Create list quickly and Play videos from anywhere in browser and never forgot to watch favourite videos.",
     "version": "1.0",
     "manifest_version": 3,
     "background": {
