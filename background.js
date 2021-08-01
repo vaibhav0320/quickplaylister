@@ -50,18 +50,27 @@ chrome.runtime.onMessage.addListener(
    }
 
 
+
+chrome.tabs.onUpdated.addListener(function(main_tab,changeInfo,tab){
+    console.log(tab,changeInfo);
+});
+
 //#################################################
 //#       context menu                            #
 //#################################################
 
 const CONTEXT_MENU_ID = "quickplay";
-function geturl(info,tab) {
+function geturl(info) {
+  console.log(info);
   if (info.menuItemId !== CONTEXT_MENU_ID) {
     return;
   }
   //console.log(info);
   //console.log("Word " + info.linkUrl + " was clicked.");
-  if(typeof info.linkUrl !== "undefined"){
+  var linkurl;
+  if(info.linkUrl == undefined) { linkurl = info.pageUrl;}
+  else{linkurl = info.linkUrl;}
+  if(typeof linkurl !== "undefined"){
       chrome.storage.local.get("list", function(data) {
         if(data.list.length == 0){
             chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -72,7 +81,7 @@ function geturl(info,tab) {
           data.list = {};
         }
         
-        fetch("https://www.youtube.com/oembed?url="+info.linkUrl+"&format=json").then(r => r.text()).then(result => {
+        fetch("https://www.youtube.com/oembed?url="+linkurl+"&format=json").then(r => r.text()).then(result => {
           var vidtitle;
           try{
           var resp = JSON.parse(result);
@@ -83,7 +92,7 @@ function geturl(info,tab) {
           vidtitle = url;
           }
           console.log(vidtitle);
-          data.list[info.linkUrl] = vidtitle;
+          data.list[linkurl] = vidtitle;
           chrome.storage.local.set({ "list" : data.list}, function(){});
           });
 
@@ -96,8 +105,10 @@ chrome.contextMenus.onClicked.addListener(geturl);
 
 chrome.contextMenus.removeAll(function() {
   chrome.contextMenus.create({
-    title: "Add video to Quick list", 
-    contexts:["link"], 
-    id : CONTEXT_MENU_ID
+    title: "Add to QuickList", 
+    contexts:["link","page"], 
+    id : CONTEXT_MENU_ID,
+    targetUrlPatterns: ["https://www.youtube.com/watch?v=*"],
+    documentUrlPatterns: [ "https://www.youtube.com/*"]
   });
 });
