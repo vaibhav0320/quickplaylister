@@ -8,7 +8,6 @@ Menu \
 </span>'
 load_from_storage();
 
-
 //## Initial function to fetch the data from storage if exist.
 
 function load_from_storage(){
@@ -19,7 +18,7 @@ function load_from_storage(){
     if(typeof temp_queue !== 'undefined' && typeof temp_queue !== null){
       queue = temp_queue;
       for(var key in queue){
-        generate_html(key,queue[key]);
+        generate_html(queue[key][1],queue[key][0]);
       }
     }
     });
