@@ -9,4 +9,4 @@ Contributions is needed to make it better.
 <br>
 Please raise or work on open issues if you are looking for something to code XD;
 <br>
-fetched from @vaibhav0320
+fetched from [@vaibhav0320](https://github.com/vaibhav0320/quickplaylister)
