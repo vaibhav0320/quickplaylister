@@ -42,11 +42,18 @@ chrome.runtime.onMessage.addListener(
 
         if(request.cmd == 'get_tabid'){
           sendResponse({tabid: main_tab})
+          console.log(main_tab)
         }
         if(request.cmd == 'tab_info'){
           console.log(request.tab.id);
           main_tab = request.tab.id;
         }
+        //!!!!!!
+        if(request.cmd == 'get_time'){
+          console.log(request.tab.id);
+          main_tab = request.tab.id;
+        }
+        //!!!!!!
         if(request.cmd == 'remove_key'){
 
           chrome.storage.local.get("list", function(data) {
@@ -68,7 +75,8 @@ chrome.runtime.onMessage.addListener(
 
 
 chrome.tabs.onUpdated.addListener(function(main_tab,changeInfo,tab){
-    console.log(tab,changeInfo);
+    console.log(tab);
+    console.log(document.getElementById("movie_player").getDuration())
 });
 
 //#################################################
@@ -79,6 +87,7 @@ const CONTEXT_MENU_ID = "quickplay";
 function geturl(info) {
   console.log(info);
   if (info.menuItemId !== CONTEXT_MENU_ID) {
+    console.log('triggred')
     return;
   }
   //console.log(info);
@@ -130,4 +139,29 @@ chrome.contextMenus.removeAll(function() {
     targetUrlPatterns: ["https://www.youtube.com/watch?v=*"],
     documentUrlPatterns: [ "https://www.youtube.com/*"]
   });
+});
+
+//!cHECK-uP ---> code above this line is to check if any of the song/video playing rightnow belongs to the playlist.
+identifier() 
+function identifier() {
+  chrome.tabs.query({ currentWindow: true }, function (tabs) {
+    chrome.storage.local.get("list", function(data) {
+      for(let TAB_NUM=0; TAB_NUM < tabs.length; TAB_NUM++){
+        for(let PLAYLIST_CHILD_NUM=0; PLAYLIST_CHILD_NUM < Object.keys(data.list).length; PLAYLIST_CHILD_NUM++){
+          if(tabs[TAB_NUM].url == Object.keys(data.list)[PLAYLIST_CHILD_NUM]){
+            console.log(` At Tab No: ${TAB_NUM}, the video is 
+            in playlist's --- (${PLAYLIST_CHILD_NUM+1})th song.... URL: ${tabs[TAB_NUM].url}`)
+            PLAYLIST_CHILD_NUM++
+          }
+          else{
+            console.log('no song from playlist found in active tabs')
+          }
+        }
+      }
+  });       
+  });
+}
+  chrome.tabs.onUpdated.addListener(function() {
+    console.log('change in tabs occured')
+    identifier() 
 });
