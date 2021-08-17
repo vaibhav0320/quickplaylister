@@ -1,6 +1,22 @@
 var main_tab;
 var listid = 0;
 
+function datetime_id(){
+  var date = new Date();
+  var components = [
+    date.getYear(),
+    date.getMonth(),
+    date.getDate(),
+    ("0" + date.getHours()).slice(-2),
+    ("0" + date.getMinutes()).slice(-2),
+    ("0" + date.getSeconds()).slice(-2),
+    //date.getMilliseconds()
+  ];
+  return components.join("");
+}
+
+
+
 //#################################################
 //#       On message listners                     #
 //#################################################
@@ -98,10 +114,13 @@ function geturl(info) {
           }
     
           catch{
-          vidtitle = url;
+          vidtitle = linkurl;
           }
-          console.log(vidtitle);
-          data.list[linkurl] = vidtitle;
+          //console.log(vidtitle);
+          var id = datetime_id();
+          console.log(id);
+          //data.list[linkurl] = vidtitle;
+          data.list[id] = [vidtitle,linkurl];
           chrome.storage.local.set({ "list" : data.list}, function(){});
           });
 

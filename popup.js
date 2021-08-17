@@ -8,7 +8,6 @@ Menu \
 </span>'
 load_from_storage();
 
-
 //## Initial function to fetch the data from storage if exist.
 
 function load_from_storage() {
