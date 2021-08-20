@@ -26,7 +26,6 @@ chrome.runtime.onMessage.addListener(
        
         if(request.cmd == 'get'){
           var list;
-            console.log("get called");
             chrome.storage.local.get("list", function(data) {
                 list = data.list;
                 console.log(list);
@@ -48,11 +47,13 @@ chrome.runtime.onMessage.addListener(
           console.log(request.tab.id);
           main_tab = request.tab.id;
         }
+
         //!!!!!!
         if(request.cmd == 'get_time'){
           console.log(request.tab.id);
           main_tab = request.tab.id;
         }
+
         //!!!!!!
         if(request.cmd == 'remove_key'){
 
@@ -78,6 +79,7 @@ chrome.tabs.onUpdated.addListener(function(main_tab,changeInfo,tab){
     console.log(tab);
     console.log(document.getElementById("movie_player").getDuration())
 });
+
 
 //#################################################
 //#       context menu                            #
@@ -118,10 +120,26 @@ function geturl(info) {
           }
           //console.log(vidtitle);
           var id = datetime_id();
-          console.log(id);
+          //console.log(id);
           //data.list[linkurl] = vidtitle;
           data.list[id] = [vidtitle,linkurl];
           chrome.storage.local.set({ "list" : data.list}, function(){});
+
+          let vidId = linkurl;
+          vidId = vidId.split('=');
+          vidId = vidId[1];
+          vidId = vidId.split('&');
+          vidId = vidId[0];
+
+          /*  Some impemetation of caching the image thumbnail 
+
+          fetch("https://img.youtube.com/vi/"+vidId+"/hqdefault.jpg").then(response => response.blob()).then(image => {
+            chrome.storage.local.set({ vidId : image}, function(){
+              console.log("Image downloaded");
+            });
+          })
+          */  
+
           });
 
       

@@ -10,6 +10,15 @@ load_from_storage();
 
 //## Initial function to fetch the data from storage if exist.
 
+function get_video_id(url){
+  let vidId = url
+  vidId = vidId.split('=')
+  vidId = vidId[1];
+  vidId = vidId.split('&')
+  vidId = vidId[0]
+  return vidId;
+}
+
 function load_from_storage() {
 
   chrome.runtime.sendMessage({ cmd: 'get' }, function (response) {
@@ -18,8 +27,8 @@ function load_from_storage() {
     if (typeof temp_queue !== 'undefined' && typeof temp_queue !== null) {
       queue = temp_queue;
       for (var key in queue) {
-        generate_html(key, queue[key]);
-        //console.log('URL: ' + key)
+        generate_html(queue[key][1], queue[key][0],key);
+        //console.log('URL: ' + key + queue[key]);
       }
     }
   });
@@ -31,30 +40,48 @@ function load_from_storage() {
 
 function generate_html(url, vidtitle, id) {
 
+  // createing href attribute for each entry
+
   var list = document.getElementById('playlist');
   var entry = document.createElement('li');
   var hreftag = document.createElement('a');
+  var imgtag = document.createElement('img');
+
   hreftag.appendChild(document.createTextNode(vidtitle));
   hreftag.title = vidtitle;
   hreftag.href = url;
-  let vidId = url
-  vidId = vidId.split('=')
-  vidId = vidId[1];
-  vidId = vidId.split('&')
-  vidId = vidId[0]
-  hreftag.code = vidId;
   entry.appendChild(hreftag);
   entry.setAttribute('id', url);
+
+  // Get the video id from youtube link
+
+  hreftag.code = get_video_id(url);
+
+  //Creating remove btn for each entry
+ 
   var removeButton = document.createElement('button');
   removeButton.appendChild(document.createTextNode("remove"));
   removeButton.setAttribute('id', url);
   removeButton.setAttribute('class', "removebtn");
   removeButton.innerHTML = '<i class="gg-trash"></i>';
   //removeButton.innerHTML = svg_icon;
+
+  /*  added if want to put thumbnail beside the title
+ chrome.storage.local.get(vidId, function(data){
+      console.log("getting image");
+      imgtag.src = data;
+      hreftag.appendChild(imgtag);
+  
+
+  }); */
+
   entry.appendChild(removeButton);
   lastid += 1;
   list.appendChild(entry);
+
 }
+
+
 function send_tabinfo(tab) {
   chrome.runtime.sendMessage({ cmd: 'tab_info', tab: tab }, function (response) { });
 }
@@ -116,7 +143,6 @@ function click_handle_delete_all() {
   chrome.runtime.sendMessage({ cmd: 'clear_storage' }, function (response) { });
 }
 
-
 //registering handlers 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -131,128 +157,29 @@ document.addEventListener("DOMContentLoaded", function () {
       click_handle_list(e);
     }
   });
+
+  // Mouse over handler
+  document.getElementById("playlist").addEventListener("mouseover", function(e){
+    if( typeof e.target.href !== 'undefined'){
+
+      var url = e.target.href;
+      var vidId = get_video_id(url);
+
+      // Costly loading of backgroud image Need a local storage to store  and  load thumbnail
+
+        imgurl = "https://img.youtube.com/vi/"+vidId+"/hqdefault.jpg"
+        document.body.style.backgroundImage = "url("+imgurl+")";
+
+    }
+  });
+
+  // Mouse leave handler 
+  document.getElementById("playlist").addEventListener("mouseleave", function(){
+    console.log("Mouse leave");
+    document.body.style.backgroundColor = '#161616';
+    document.body.style.backgroundImage = "";
+  });
+
 });
 
-//!?hover-BG
-//Recursion until DOM loades completely.....
-function recursion() {
-  setTimeout(() => {
-    if (document.querySelectorAll('ul#playlist') == undefined) {
-      console.log('winding up....................................................................')
-      recursion()
-    }
-    else if (document.querySelectorAll('ul#playlist')[0] == undefined) {
-      console.log('winding up....................................................................')
-      recursion()
-    }
-    else if (document.querySelectorAll('ul#playlist')[0].childNodes[0] == undefined) {
-      console.log('winding up....................................................................')
-      recursion()
-    }
-    else if (document.querySelectorAll('ul#playlist')[0].childNodes[2].firstElementChild.code == undefined) {
-      console.log('winding up....................................................................')
-      recursion()
-    }
-    else {
-      const hoverer = (param1) => {
-        document.body.style.backgroundImage = `url(https://img.youtube.com/vi/${document.querySelectorAll('ul#playlist')[0].childNodes[param1].firstElementChild.code}/hqdefault.jpg)`
-        document.body.style.backgroundRepeat = 'no-repeat'
-        document.body.style.backgroundAttachment = 'fixed'
-        document.body.style.backgroundPosition = 'center'
-        console.log(document.querySelectorAll('ul#playlist')[0].childNodes[param1].firstElementChild.code)
-      }
-      document.querySelectorAll('ul#playlist')[0].childNodes[1].addEventListener('mouseenter', () => {
-        hoverer(1)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[2].addEventListener('mouseenter', () => {
-        hoverer(2)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[3].addEventListener('mouseenter', () => {
-        hoverer(3)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[4].addEventListener('mouseenter', () => {
-        hoverer(4)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[5].addEventListener('mouseenter', () => {
-        hoverer(5)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[6].addEventListener('mouseenter', () => {
-        hoverer(6)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[7].addEventListener('mouseenter', () => {
-        hoverer(7)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[8].addEventListener('mouseenter', () => {
-        hoverer(8)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[9].addEventListener('mouseenter', () => {
-        hoverer(9)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[10].addEventListener('mouseenter', () => {
-        hoverer(10)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[11].addEventListener('mouseenter', () => {
-        hoverer(11)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[12].addEventListener('mouseenter', () => {
-        hoverer(12)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[13].addEventListener('mouseenter', () => {
-        hoverer(13)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[14].addEventListener('mouseenter', () => {
-        hoverer(14)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[15].addEventListener('mouseenter', () => {
-        hoverer(15)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[16].addEventListener('mouseenter', () => {
-        hoverer(16)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[17].addEventListener('mouseenter', () => {
-        hoverer(17)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[18].addEventListener('mouseenter', () => {
-        hoverer(18)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[19].addEventListener('mouseenter', () => {
-        hoverer(19)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[20].addEventListener('mouseenter', () => {
-        hoverer(20)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[21].addEventListener('mouseenter', () => {
-        hoverer(21)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[22].addEventListener('mouseenter', () => {
-        hoverer(22)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[23].addEventListener('mouseenter', () => {
-        hoverer(23)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[24].addEventListener('mouseenter', () => {
-        hoverer(24)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[25].addEventListener('mouseenter', () => {
-        hoverer(25)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[26].addEventListener('mouseenter', () => {
-        hoverer(26)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[27].addEventListener('mouseenter', () => {
-        hoverer(27)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[28].addEventListener('mouseenter', () => {
-        hoverer(28)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[29].addEventListener('mouseenter', () => {
-        hoverer(29)
-      })
-      document.querySelectorAll('ul#playlist')[0].childNodes[30].addEventListener('mouseenter', () => {
-        hoverer(30)
-      })
-    }
-  }, 200)
 
-}
-recursion()
