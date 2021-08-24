@@ -1,5 +1,5 @@
 html {
-  font-family: "Lucida Console", "Courier New", monospace;
+font-family: "Lucida Console", "Courier New", monospace;
 }
 body {
   height: 100px;
@@ -85,9 +85,23 @@ h1 {
 }
 
 img{
-  width: 100px;
+  width: 130px;
+  height: 98px;
+  position: fixed;
+  left: 280px;
+  top: 5px;
+  object-fit: scale-down;
 }
 
+img:hover {
+  cursor: pointer;
+}
+
+.alllist{
+  padding-top: 40px;
+  position: relative;
+  left: -20px;
+}
 .clearall {
   display: inline-block;
   padding: 0.5em 1.7em;

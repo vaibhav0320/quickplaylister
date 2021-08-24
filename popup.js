@@ -11,11 +11,11 @@ load_from_storage();
 //## Initial function to fetch the data from storage if exist.
 
 function get_video_id(url){
-  let vidId = url
-  vidId = vidId.split('=')
+  let vidId = url;
+  vidId = vidId.split('=');
   vidId = vidId[1];
-  vidId = vidId.split('&')
-  vidId = vidId[0]
+  vidId = vidId.split('&');
+  vidId = vidId[0];
   return vidId;
 }
 
@@ -26,11 +26,22 @@ function load_from_storage() {
     console.log(temp_queue);
     if (typeof temp_queue !== 'undefined' && typeof temp_queue !== null) {
       queue = temp_queue;
+      var cnt = 0;
+      for (var key in queue) {
+        cnt += 1
+      }
+      if(cnt != 0 ){
       for (var key in queue) {
         generate_html(queue[key][1], queue[key][0],key);
         //console.log('URL: ' + key + queue[key]);
+      }}
+      // Need to add initial msg
+      else{
+       
       }
+
     }
+    
   });
 
 
@@ -158,7 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-
+  document.getElementById("thumbimg").addEventListener("click", function(){
+    console.log("click");
+    chrome.tabs.create({url: "https://github.com/vaibhav0320/quickplaylister/"});
+  })
   // Mouse over handler
   document.getElementById("playlist").addEventListener("mouseover", function(e){
     if( typeof e.target.href !== 'undefined'){
@@ -178,9 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Mouse leave handler 
   document.getElementById("playlist").addEventListener("mouseleave", function(){
     //document.body.style.backgroundImage = "";
-    document.getElementById('thumbimg').src = "";
+    document.getElementById('thumbimg').src = "icons/github.png";
   });
 
 });
-
-

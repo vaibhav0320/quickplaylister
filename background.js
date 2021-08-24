@@ -68,6 +68,7 @@ chrome.runtime.onMessage.addListener(
   );
 
   function clear_local_storage(){
+
     chrome.storage.local.set({"list": {}},function() {
 
      })
