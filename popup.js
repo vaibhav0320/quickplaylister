@@ -51,7 +51,7 @@ function generate_html(url, vidtitle, id) {
   hreftag.title = vidtitle;
   hreftag.href = url;
   entry.appendChild(hreftag);
-  entry.setAttribute('id', url);
+  entry.setAttribute('id', id);
 
   // Get the video id from youtube link
 
@@ -61,9 +61,9 @@ function generate_html(url, vidtitle, id) {
  
   var removeButton = document.createElement('button');
   removeButton.appendChild(document.createTextNode("remove"));
-  removeButton.setAttribute('id', url);
+  removeButton.setAttribute('id', id);
   removeButton.setAttribute('class', "removebtn");
-  removeButton.innerHTML = '<i class="gg-trash"></i>';
+  removeButton.innerHTML = '<i id=' + id + ' class="gg-trash"></i>';
   //removeButton.innerHTML = svg_icon;
 
   /*  added if want to put thumbnail beside the title
@@ -149,14 +149,15 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("clearall").onclick = click_handle_delete_all;
   document.getElementById("playlist").addEventListener("click", function (e) {
     console.log("user went for: " + e.target);
-    if (e.target && e.target.nodeName === 'BUTTON') {
-      console.log("HAEL");
+    if (e.target && e.target.nodeName === 'I') {
+      console.log("I clicked");
       removelink(e.target.id);
     }
     if (e.target && e.target.nodeName === 'A') {
       click_handle_list(e);
     }
   });
+
 
   // Mouse over handler
   document.getElementById("playlist").addEventListener("mouseover", function(e){
@@ -168,16 +169,16 @@ document.addEventListener("DOMContentLoaded", function () {
       // Costly loading of backgroud image Need a local storage to store  and  load thumbnail
 
         imgurl = "https://img.youtube.com/vi/"+vidId+"/hqdefault.jpg"
-        document.body.style.backgroundImage = "url("+imgurl+")";
+        //document.body.style.backgroundImage = "url("+imgurl+")";
+        document.getElementById('thumbimg').src = imgurl;
 
     }
   });
 
   // Mouse leave handler 
   document.getElementById("playlist").addEventListener("mouseleave", function(){
-    console.log("Mouse leave");
-    document.body.style.backgroundColor = '#161616';
-    document.body.style.backgroundImage = "";
+    //document.body.style.backgroundImage = "";
+    document.getElementById('thumbimg').src = "";
   });
 
 });

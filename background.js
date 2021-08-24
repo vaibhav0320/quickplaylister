@@ -160,7 +160,7 @@ chrome.contextMenus.removeAll(function() {
 });
 
 //!cHECK-uP ---> code above this line is to check if any of the song/video playing rightnow belongs to the playlist.
-identifier() 
+/*identifier() 
 function identifier() {
   chrome.tabs.query({ currentWindow: true }, function (tabs) {
     chrome.storage.local.get("list", function(data) {
@@ -182,4 +182,4 @@ function identifier() {
   chrome.tabs.onUpdated.addListener(function() {
     console.log('change in tabs occured')
     identifier() 
-});
+});*/
