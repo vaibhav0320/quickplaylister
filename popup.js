@@ -8,8 +8,7 @@ Menu \
 </span>'
 load_from_storage();
 
-//## Initial function to fetch the data from storage if exist.
-
+// Function to get VideoId from Link
 function get_video_id(url){
   let vidId = url;
   vidId = vidId.split('=');
@@ -19,6 +18,7 @@ function get_video_id(url){
   return vidId;
 }
 
+//## Initial function to fetch the data from storage if exist.
 function load_from_storage() {
 
   chrome.runtime.sendMessage({ cmd: 'get' }, function (response) {
