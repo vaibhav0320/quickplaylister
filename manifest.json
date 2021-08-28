@@ -6,11 +6,17 @@
     "background": {
         "service_worker": "background.js"
       },
-      "permissions": ["tabs", "contextMenus", "storage"],
+      "permissions": ["tabs", "contextMenus", "storage", "scripting"],
       "icons": {
-        "16": "16-icon.png",
-        "48": "48-icon.png"
+        "16": "/icons/16-icon.png",
+        "48": "/icons/48-icon.png"
       },
+      "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["contentscript.js"]
+        }
+    ],
       "action": {
         "default_popup": "popup.html"
       },
